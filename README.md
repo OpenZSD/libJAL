@@ -2,7 +2,7 @@
 
 # libJAL
 
-Work in progress...
+<img style="margin-bottom: -15px;" src="doc/res/wip.png" width="660"/>
 
 ## About
 
