@@ -4,15 +4,17 @@
 
 <img style="margin-bottom: -15px;" src="doc/res/wip.png" width="660"/>
 
+libJAL is still being created; libstrext a string extension library has been created with an initial release. See release folder for libraries.
+
 ## About
 
 JAL is short for JSON Adjacent Layout. JAL on first glance appears similar JSON, but with additional functionality and fewer contraints. libJal can also parse JSON (in most cases) as JAL behaves as a superset of JSON.
 
-### The differences
+### <u>The differences</u>
 
 #### Everything as string and staged interpretation
 
-When parsing JAL, everything is first parsed out as a string including both the member and the value. So `"x":1` in JSON, **1** is an integer and **x** is a string, whereas in JAL both start as strings and is left to later stages to interpret values as needed. This allows for things such as enumerations to be defined and evaluated in later stages. 
+When parsing JAL, everything is first parsed out as a string including both the member and the value. So `"x":1` in <u>JSON</u>, **1** is an integer and **x** is a string, whereas in <u>JAL</u> both start as strings and is left to later stages to interpret values as needed. This allows for things such as enumerations to be defined and evaluated in later stages. 
 
 #### Quotes optional
 
@@ -24,7 +26,7 @@ No backslash escape characters are parsed out to allow the string to be handled 
 
 ### Multi-line string literal
 
-Tripple quotes are used as a multi-line string with a backslash infront eliminating all white space up to the first new line and a trailing backslash to do the same for the back. So `\"<your multi-line string literal>"\`will result in all white space up to the first new line (or non-whitespace) to be trimmed. The trimming is convient if you wish to preserve text alignment. Removing the backslashes will avoid the trimming if undesired.
+Tripple quotes are used as a multi-line string with a backslash infront eliminating all white space up to the first new line and a trailing backslash to do the same for the back. So `\"""<your multi-line string literal>"""\`will result in all white space up to the first new line (or non-whitespace) to be trimmed. The trimming is convient if you wish to preserve text alignment. Removing the backslashes will avoid the trimming if undesired.
 
 #### Typed members
 
@@ -73,6 +75,10 @@ Each object can have named and unnamed members, where unnamed are objects aren't
 
 The order of members are preserved such that if given objects Cat, Dog, Horse and you specify objects in the order of Cat, Dog, Cat, Horse; they will be ordered that way when parsed. Furthermore if a member name is used multiple times, it's equivalent to an array such that `a:[1,2,3], a:4, a:[5,6], a:0` is equal to `a[1,2,3,4,5,6,0]`
 
-### Reserved types
+#### Commas optional for object members
+
+Objects don't require commas between member. **However** arrays/lists require them.
+
+### <u>Reserved types</u>
 
 TBD...
