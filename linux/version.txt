@@ -1,0 +1,2 @@
+STR_EXT_VER=1.0.1
+JAL_VER=1.0.0
