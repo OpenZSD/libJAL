@@ -1,5 +1,8 @@
 #include<strExt/StrExt.h>
 
+#ifndef PARSE_ELEMENTS_H
+#define PARSE_ELEMENTS_H
+
 namespace jal
 {
     using namespace std;
@@ -8,7 +11,7 @@ namespace jal
     {
         size_t line;
         size_t col;
-    }
+    };
     struct ParseToken
     {
         ParsePos from;
@@ -18,3 +21,5 @@ namespace jal
         bool isAtomicParse; //this is purely a string with no further structure to parse such as a whole word, value, or multiline text
     };
 }
+
+#endif

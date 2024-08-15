@@ -86,16 +86,16 @@ function buildTarget() {
 
     if [[ $fstat -eq 0 ]]  ; then
         if [[ "$1" == "strext" ]] ; then
-            cp -r "$STREXT_DIR/include" "$STREXT_BUILD_DIR"
+            cp -rf "$STREXT_DIR/include" "$STREXT_BUILD_DIR"
             cd $STREXT_BUILD_DIR
             make
             fstat=$?
         elif [[ "$1" == "jal" ]] ; then
             #make sure strext is current and working
             testBuild strext
-            cp -r "$JAL_DIR/include" "$JAL_BUILD_DIR"
-            cp -r "$STREXT_BUILD_DIR/include/." "$JAL_BUILD_DIR/res/strExt/"
-            cp -r "$STREXT_BUILD_DIR/lib_static/." "$JAL_BUILD_DIR/res/lib/"
+            cp -rf "$JAL_DIR/include" "$JAL_BUILD_DIR"
+            cp -rf "$STREXT_BUILD_DIR/include/." "$JAL_BUILD_DIR/res/strExt/"
+            cp -rf "$STREXT_BUILD_DIR/lib_static/." "$JAL_BUILD_DIR/res/lib/"
             cd $JAL_BUILD_DIR
             make
             fstat=$?
@@ -118,8 +118,8 @@ function testBuild() {
             rm -rf "$STREXT_TEST_DIR/out"
             mkdir "$STREXT_TEST_DIR/out"
             mkdir "$STREXT_TEST_DIR/out/strExt"
-            cp -r "$STREXT_BUILD_DIR/include/." "$STREXT_TEST_DIR/out/strExt/"
-            cp -r "$STREXT_BUILD_DIR/lib_static/." "$STREXT_TEST_DIR/out/lib"
+            cp -rf "$STREXT_BUILD_DIR/include/." "$STREXT_TEST_DIR/out/strExt/"
+            cp -rf "$STREXT_BUILD_DIR/lib_static/." "$STREXT_TEST_DIR/out/lib"
             cmake -S "$STREXT_TEST_DIR" -B "$STREXT_TEST_DIR/out"
             cd "$STREXT_TEST_DIR/out"
             make
@@ -135,8 +135,8 @@ function testBuild() {
             rm -rf "$JAL_TEST_DIR/out"
             mkdir "$JAL_TEST_DIR/out"
             mkdir "$JAL_TEST_DIR/out/jal"
-            cp -r "$JAL_BUILD_DIR/include/." "$JAL_TEST_DIR/out/jal/"
-            cp -r "$JAL_BUILD_DIR/lib_static/." "$JAL_TEST_DIR/out/lib"
+            cp -rf "$JAL_BUILD_DIR/include/." "$JAL_TEST_DIR/out/jal/"
+            cp -rf "$JAL_BUILD_DIR/lib_static/." "$JAL_TEST_DIR/out/lib"
             cmake -S "$JAL_TEST_DIR" -B "$JAL_TEST_DIR/out"
             cd "$JAL_TEST_DIR/out"
             make
@@ -177,9 +177,9 @@ function createRelease() {
             mkdir -p "$STREXT_BUILD_RELEASE_DIR/$libBasePath"
             mkdir -p "$STREXT_BUILD_RELEASE_DIR/$includeBasePath/strExt"
             mkdir -p "$STREXT_BUILD_RELEASE_DIR/DEBIAN"
-            cp -r "$STREXT_BUILD_DIR/include/." "$STREXT_BUILD_RELEASE_DIR/$includeBasePath/strExt"
-            cp -r "$STREXT_BUILD_DIR/lib_static/." "$STREXT_BUILD_RELEASE_DIR/$libBasePath" 
-            cp -r "$STREXT_BUILD_DIR/lib/." "$STREXT_BUILD_RELEASE_DIR/$libBasePath" 
+            cp -rf "$STREXT_BUILD_DIR/include/." "$STREXT_BUILD_RELEASE_DIR/$includeBasePath/strExt"
+            cp -rf "$STREXT_BUILD_DIR/lib_static/." "$STREXT_BUILD_RELEASE_DIR/$libBasePath" 
+            cp -rf "$STREXT_BUILD_DIR/lib/." "$STREXT_BUILD_RELEASE_DIR/$libBasePath" 
             printDebianCtl "libstrext" $STR_EXT_VER $sysArch "An extension of std::string functionality in c++." > "$STREXT_BUILD_RELEASE_DIR/DEBIAN/control"
             cd "$STREXT_BUILD_RELEASE_DIR/.."
             dpkg-deb --build --root-owner-group $STREXT_RELEASE_DIR_NAME

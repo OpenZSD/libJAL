@@ -56,6 +56,16 @@ TestOutput test2()
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t \t\r\n").trim()==std::string()); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t A \t\r\n").trim()=="A"); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trim()=="a A"); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trimFront()=="a A"); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trimBack()=="a A"); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t \t\r\n").trimFront()==std::string()); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t \t\r\n").trimBack()==std::string()); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt("").trimFront()==std::string()); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt("").trimBack()==std::string()); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt("1").trimFront()==std::string("1")); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt("1").trimBack()==std::string("1")); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" ").trimFront()==std::string()); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" ").trimBack()==std::string()); });
     if(!healthy) { std::cerr << "(test2) Err: failed trim test #" << idx << std::endl; }
     return {"String trim check",healthy};
 }
@@ -212,11 +222,30 @@ TestOutput test9()
     return {"Version check",healthy};
 }
 
+TestOutput test10()
+{
+    bool healthy{true};
+    int idx{0};
+    auto a = ext::StrExt("1");
+    auto b = std::string("2");
+    a+=b;
+    chkTst(healthy, idx, [&](){ return ((ext::StrExt("1")+ext::StrExt("2")) == ext::StrExt("12")); });
+    chkTst(healthy, idx, [&](){ return ((ext::StrExt("1")+std::string("2")) == ext::StrExt("12")); });
+    chkTst(healthy, idx, [&](){ return ((std::string("1")+ext::StrExt("2")) == ext::StrExt("12")); });
+    chkTst(healthy, idx, [&](){ return ((ext::StrExt("1")+ext::StrExt("2")).findAll("2") == std::vector<size_t>({1})); });
+    chkTst(healthy, idx, [&](){ return ((ext::StrExt("1")+ext::StrExt("2")).toInt() == 12); });
+    chkTst(healthy, idx, [&](){ return (a.toInt() == 12); });
+    chkTst(healthy, idx, [&](){ return (ext::StrListExt({"a","b","c"})+ext::StrListExt()+ext::StrListExt({"d","e","f"}) 
+                                        == ext::StrListExt({"a","b","c","d","e","f"}));  });
+    if(!healthy) { std::cerr << "(test10) Err: failed (+) test #" << idx << std::endl; }
+    return {"(+) check",healthy};
+}
+
 int main(int argc, char *argv[])
 {
     std::cout << "======START OF TESTS [StrExt]======" << std::endl;
-    Test tests[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9};
-    int testCount = 9;
+    Test tests[] = {test1, test2, test3, test4, test5, test6, test7, test8, test9, test10};
+    int testCount = 10;
     bool healthy {true};
 
     for(int i=0; i<testCount; i++)

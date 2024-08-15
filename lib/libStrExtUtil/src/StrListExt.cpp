@@ -25,4 +25,19 @@ namespace ext
         }
         return joined;
     }
+
+    StrListExt StrListExt::operator+ (const vector<string>& list)
+    {
+        StrListExt out;
+        out.reserve(size()+list.size());
+        for(auto &str : (*this))
+        {
+            out.push_back(str);
+        }
+        for(auto &str : list)
+        {
+            out.push_back(str);
+        }
+        return out; 
+    }
 }

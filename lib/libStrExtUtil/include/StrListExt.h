@@ -17,7 +17,9 @@ namespace ext
         StrListExt() : vector<string>() {}
         StrListExt(const vector<string> &v) : vector<string>(v) {}
         StrListExt(initializer_list<string> il) : vector<string>(il) {}
-        StrExt join(const string &joiner) const;
+        StrExt join(const string &joiner) const;    
+        StrListExt operator+ (const vector<string>& list);
+        StrListExt operator+ (const StrListExt& list) { return (*this) + ((vector<string>)list); }
     };
 }
 

@@ -31,6 +31,9 @@ namespace ext
         StrExt& operator= (const string& str) { assign(str); return *this; }
         StrExt& operator= (const StrExt& str) { assign(str); return *this; }
 
+        StrExt operator+ (const string& str);
+        StrExt operator+ (const StrExt& str);
+
         vector<size_t> findAll(const string& str) const;
         StrListExt split(const string& str) const;
         StrListExt splitOnSpace() const;
@@ -39,6 +42,8 @@ namespace ext
         StrExt toUpper() const;
 
         StrExt trim() const;
+        StrExt trimFront() const;
+        StrExt trimBack() const;
         bool isNum() const;
         bool isWord() const;
         double toDouble(bool autoTrim=false) const;

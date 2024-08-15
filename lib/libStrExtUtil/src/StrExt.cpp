@@ -61,6 +61,16 @@ namespace ext
         }
     }
     
+    StrExt StrExt::operator+ (const string& str)
+    {
+        return StrExt(((string)*this)+(str));
+    }
+
+    StrExt StrExt::operator+ (const StrExt& str)
+    {
+        return StrExt(((string)*this)+((string)str));
+    }
+
     vector<size_t> StrExt::findAll(const string& str) const
     {
         size_t lastPt{0};
@@ -191,6 +201,42 @@ namespace ext
     }
 
     StrExt StrExt::trim() const
+    {
+        long int front{0};
+        long int back{(long int) length()-1};
+        const char *raw = c_str();
+        while(front < back)
+        {
+            if(isspace(raw[front])) { front++; }
+            else { break; }
+        }
+        while(front <= back) //check = for all spaces case (return empty)
+        {
+            if(isspace(raw[back])) { back--; }
+            else { break; }
+        }
+        return substr(front,(back-front+1));
+    }
+
+    StrExt StrExt::trimFront() const
+    {
+        long int front{0};
+        long int back{(long int) length()-1};
+        const char *raw = c_str();
+        while(front < back)
+        {
+            if(isspace(raw[front])) { front++; }
+            else { break; }
+        }
+        while(front <= back) //check = for all spaces case (return empty)
+        {
+            if(isspace(raw[back])) { back--; }
+            else { break; }
+        }
+        return substr(front,(back-front+1));
+    }
+
+    StrExt StrExt::trimBack() const
     {
         long int front{0};
         long int back{(long int) length()-1};
