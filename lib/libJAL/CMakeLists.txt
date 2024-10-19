@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib_static)
@@ -13,7 +13,7 @@ add_library(JAL SHARED
     src/Parsing.cpp
 )
 target_link_directories(JAL PRIVATE "${PROJECT_BINARY_DIR}/res/lib")
-target_link_libraries(JAL StrExt)
+target_link_libraries(JAL StrExt_static)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 target_include_directories(JAL PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)

@@ -1,3 +1,4 @@
 libstrext-1.0.0 Initial build, extended string functionality to split, parse numbers and upper/lower case conversion.
 libstrext-1.0.1 Fixed version bug (version was blank when checking) and bug in split method that fails to get last element.
 libstrext-1.1.0 Overrided (+) opperator.
+libstrext-1.1.1 Fixed bug in trim functions of StrExt

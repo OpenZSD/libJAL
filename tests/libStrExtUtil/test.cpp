@@ -56,8 +56,8 @@ TestOutput test2()
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t \t\r\n").trim()==std::string()); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t A \t\r\n").trim()=="A"); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trim()=="a A"); });
-    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trimFront()=="a A"); });
-    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trimBack()=="a A"); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trimFront()=="a A \t\r\n"); });
+    chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t a A \t\r\n").trimBack()==" \n\n\t a A"); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t \t\r\n").trimFront()==std::string()); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt(" \n\n\t \t\r\n").trimBack()==std::string()); });
     chkTst(healthy, idx, [&](){ return (ext::StrExt("").trimFront()==std::string()); });

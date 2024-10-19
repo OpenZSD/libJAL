@@ -136,14 +136,16 @@ function testBuild() {
             mkdir "$JAL_TEST_DIR/out"
             mkdir "$JAL_TEST_DIR/out/jal"
             cp -rf "$JAL_BUILD_DIR/include/." "$JAL_TEST_DIR/out/jal/"
+            cp -rf "$STREXT_BUILD_DIR/include/." "$JAL_TEST_DIR/out/strExt/"
             cp -rf "$JAL_BUILD_DIR/lib_static/." "$JAL_TEST_DIR/out/lib"
+            cp -rf "$STREXT_BUILD_DIR/lib_static/." "$JAL_TEST_DIR/out/lib"
             cmake -S "$JAL_TEST_DIR" -B "$JAL_TEST_DIR/out"
             cd "$JAL_TEST_DIR/out"
             make
             fstat=$?
             if [[ $fstat -eq 0 ]] ; then
                 chmod 700 $JAL_TEST_DIR/out/test
-                $JAL_TEST_DIR/out/test
+                $JAL_TEST_DIR/out/test $JAL_TEST_DIR
                 fstat=$?
             else
                 >&2 echo "ERR: could not build tests for $1"

@@ -223,14 +223,9 @@ namespace ext
         long int front{0};
         long int back{(long int) length()-1};
         const char *raw = c_str();
-        while(front < back)
+        while(front <= back)
         {
             if(isspace(raw[front])) { front++; }
-            else { break; }
-        }
-        while(front <= back) //check = for all spaces case (return empty)
-        {
-            if(isspace(raw[back])) { back--; }
             else { break; }
         }
         return substr(front,(back-front+1));
@@ -241,11 +236,7 @@ namespace ext
         long int front{0};
         long int back{(long int) length()-1};
         const char *raw = c_str();
-        while(front < back)
-        {
-            if(isspace(raw[front])) { front++; }
-            else { break; }
-        }
+
         while(front <= back) //check = for all spaces case (return empty)
         {
             if(isspace(raw[back])) { back--; }
