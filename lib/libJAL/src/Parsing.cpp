@@ -1,6 +1,7 @@
 #include "Parsing.h"
 #include <set>
 #include <optional>
+#include <map>
 
 #include <iostream>
 #include <sstream>
@@ -207,7 +208,7 @@ namespace jal
                             }
                             trimFront = false;
                         } 
-                        partial.value().token += (last + "\n"); //has yet to terminate, add to partial
+                        partial.value().token += (_filterEscaped(last) + "\n"); //has yet to terminate, add to partial
                     }
                 }
                 else if(!trimFront && inMulti())
@@ -244,6 +245,11 @@ namespace jal
                 ext::StrExt frag;
                 bool inQuote {false};
                 int lastPt{0};
+                if(found.empty())
+                {
+                    newSet.push_back(token);
+                    continue;
+                }
                 for(auto nextPt : found)
                 {
                     if(inQuote)
@@ -252,18 +258,114 @@ namespace jal
                         {
                             continue;
                         }
+                        frag = _filterEscaped(line.substr(lastPt, nextPt-lastPt));
+                        newSet.push_back({{token.to.line, token.from.col+lastPt},
+                                          {token.to.line, token.from.col+nextPt},
+                                           frag, false, true});
+                        inQuote = false;
                     }
                     else
                     {
                         frag = line.substr(lastPt, nextPt-lastPt);
-                        frag = frag.trim();
+                        auto frontLen = frag.size();
+                        frag = frag.trimFront();
+                        frontLen -= frag.size();
+                        frag = frag.trimBack();
                         if(!frag.empty())
                         {
-                            newSet.push_back({{token.to.line, token.from.col+lastPt},
-                                              {token.from.line, token.from.col+nextPt},
+                            newSet.push_back({{token.to.line, token.from.col+lastPt+frontLen},
+                                              {token.to.line, token.from.col+nextPt},
                                               frag, false, false});
                         }
-                        lastPt = nextPt+1;
+                        inQuote = true;
+                    }
+                    lastPt = nextPt+1;
+                }
+                if(inQuote)
+                {
+                    throw JalException("Document error; incomplete string",
+                                       ErrorLevel::document,
+                                       to_underlying(ErrorType::stringFormatting), {token.to.line, token.from.col+lastPt});
+                }
+                else
+                {
+                    frag = line.substr(lastPt);
+                    if(!frag.empty())
+                    {
+                        newSet.push_back({{token.to.line, token.from.col+lastPt},
+                                          {token.to.line, token.from.col+lastPt+frag.size()},
+                                          frag, false, false});
+                    }
+                }
+            }
+        }
+        
+        return newSet;
+    }
+    vector<VarToken> splitOutDelimiters(vector<ParseToken> &tokens)
+    {
+        vector<VarToken> newSet;
+        for(const auto &token : tokens)
+        {
+            if(token.isAtomicParse)
+            {
+                newSet.push_back({ParseType::atomicValue, token});
+            }
+            else
+            {
+                map<size_t, ParsDelimiter> split;
+                map<ParsDelimiter,string> del = {{ParsDelimiter::openBrace,"{"},
+                                                 {ParsDelimiter::closedBrace,"}"},
+                                                 {ParsDelimiter::memberCol,":"},
+                                                 {ParsDelimiter::openList,"["},
+                                                 {ParsDelimiter::closedList,"]"},
+                                                 {ParsDelimiter::listDel,","}};
+                auto line = token.token;
+                for(const auto & [d, s] : del)
+                {    
+                    auto delimiters = line.findAll(s);
+                    for(auto idx : delimiters)
+                    {
+                        split[idx] = d;
+                    }
+                }
+                if(split.empty())
+                {
+                    newSet.push_back({ParseType::unparsed, token});
+                }
+                else
+                {
+                    size_t front{0};
+                    for(const auto & [idx, delEnum] : split)
+                    {
+                        if(idx > front)
+                        {
+                            ParseToken chunk = {{token.from.line, token.from.col+front},
+                                                {token.to.line, token.to.col+idx-1},
+                                                line.substr(front, idx-front),false,false};
+                            chunk.token = chunk.token.trim();
+                            if(!chunk.token.empty())
+                            {
+                                newSet.push_back({ParseType::unparsed, chunk});
+                            }
+
+                        }
+                       
+                        DelimPt dp{delEnum, {token.from.line, token.from.col+idx}};
+                        newSet.push_back({ParseType::delimiter, dp});
+                        front = (idx+1);
+                    }
+                    if(front < line.size())
+                    {
+                        
+                        ParseToken chunk = {{token.from.line, token.from.col+front},
+                                            {token.to.line, token.to.col+line.size()-1},
+                                            line.substr(front, line.size()-front),false,false};
+                        chunk.token = chunk.token.trim();
+                        if(!chunk.token.empty())
+                        {
+                            newSet.push_back({ParseType::unparsed, chunk});
+                        }
                     }
                 }
             }
@@ -271,3 +373,4 @@ namespace jal
         return newSet;
     }
 }
+

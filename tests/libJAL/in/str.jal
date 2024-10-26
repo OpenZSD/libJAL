@@ -3,13 +3,13 @@
     B: \"""
 FIRST STRING WITH TRIMMED NEWLINE
 """\
-    c: """second string""" \""" 3rd as
-multiline string"""
+    c: """second string""" "~first basic enclosed string~~" \""" 3rd as
+multiline string~~"""
     d: """4th""" """5th""""""
     6th """\ """
     
     7th """\
-    e : """10 lines of empty space
+    e : """10 lines of ~"empty space~"
 
 
 
@@ -20,5 +20,5 @@ multiline string"""
 
 
 """
-    "f":\""" 1 """\
+    "f":\""" ~1 """\
 }

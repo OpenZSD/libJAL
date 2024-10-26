@@ -1,0 +1,27 @@
+{
+    memberA: test
+    B: \"""
+FIRST STRING WITH TRIMMED NEWLINE
+"""\
+    c: """second string""" "{first basic enclosed string[]} ," \""" 3rd as
+multiline string"""
+    d: """4th""" """5th""""""
+    6th """\ """
+    
+    7th """\
+    array: [1,2,"3"," 4 "]
+    obj: {}
+    obj_str: { s: hi }
+    e : """:,[}]{
+
+
+
+
+
+
+
+
+
+"""
+    "f":\""" 1 """\
+}
