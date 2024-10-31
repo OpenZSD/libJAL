@@ -60,7 +60,7 @@ Each object can have named and unnamed members, where unnamed are objects aren't
         y: 0,
         w: 10,
         h: 100
-    }
+    },
     Rectangle
     {
         x: 10,
@@ -74,10 +74,6 @@ Each object can have named and unnamed members, where unnamed are objects aren't
 #### Order preserved and appended
 
 The order of members are preserved such that if given objects Cat, Dog, Horse and you specify objects in the order of Cat, Dog, Cat, Horse; they will be ordered that way when parsed. Furthermore if a member name is used multiple times, it's equivalent to an array such that `a:[1,2,3], a:4, a:[5,6], a:0` is equal to `a[1,2,3,4,5,6,0]`
-
-#### Commas optional for object members
-
-Objects don't require commas between member. **However** arrays/lists require them.
 
 ### <u>Reserved types</u>
 
@@ -109,11 +105,11 @@ Binds a named value from the root element that it belongs to. Bound member must 
 
 ```
 {
-    a: "hello world"
+    a: "hello world",
     Example
     {
         text: bind { name: a }
-    }
+    },
     b: Example
     {
         SubExample
@@ -130,9 +126,9 @@ Binds a named value from the root element that it belongs to. Bound member must 
 
 ```
 {
-    a: 1
-    c { "a comment" }
-    b: "part of model" c{"another comment"}
+    a: 1,
+    c { "a comment" },
+    b: "part of model", c{"another comment"},
     c {"""
 none of {  this } will be parsed and will be ignored
 { without error
@@ -150,9 +146,9 @@ Overrides/assigns default values for a given typed object. The the prefill value
 {
     prefill
     {
-        type: Dog
+        type: Dog,
         values: { legs: 4, sound: "woof" }
-    }
+    },
     Dog { }
 }
 ```
@@ -161,12 +157,12 @@ Overrides/assigns default values for a given typed object. The the prefill value
 
 ```
 {
-    a: { legs: 4, sound: "woof" }
+    a: { legs: 4, sound: "woof" },
     prefill
     {
         type: Dog
         values: bind { name: "a" }
-    }
+    },
     Dog { }
 }
 ```
@@ -177,7 +173,7 @@ Overrides/assigns default values for a given typed object. The the prefill value
 {
     Dog
     {
-        legs: 4
+        legs: 4,
         sound: "woof"
     }
 }

@@ -1,17 +1,17 @@
 {
-    memberA: test
+    memberA: test,
     B: \"""
 FIRST STRING WITH TRIMMED NEWLINE
-"""\
-    c: """second string""" "{first basic enclosed string[]} ," \""" 3rd as
-multiline string"""
-    d: """4th""" """5th""""""
-    6th """\ """
+"""\,
+    c: """second string""", "{first basic enclosed string[]} ,", \""" 3rd as
+multiline string""",
+    d: """4th""", """5th""","""
+    6th """\, """
     
-    7th """\
-    array: [1,2,"3"," 4 "]
-    obj: {}
-    obj_str: { s: hi }
+    7th """\,
+    array: [1,2,"3"," 4 "],
+    obj: {},
+    obj_str: { s: hi },
     e : """:,[}]{
 
 
@@ -22,6 +22,6 @@ multiline string"""
 
 
 
-"""
+""",
     "f":\""" 1 """\
 }

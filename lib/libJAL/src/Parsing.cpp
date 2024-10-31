@@ -2,6 +2,7 @@
 #include <set>
 #include <optional>
 #include <map>
+#include <deque>
 
 #include <iostream>
 #include <sstream>
@@ -56,6 +57,42 @@ ext::StrExt _filterEscaped(const ext::StrExt &line)
 
 namespace jal
 {
+    vector<ParseToken> splitOnGaps(const ParseToken &lineTok)
+    {
+        vector<ParseToken> result;
+        auto from = lineTok.from;
+        auto to = lineTok.to;
+        auto line = lineTok.token;
+        bool inGap{false};
+        int lastStart{0};
+        int idx{0};
+        for(char c : line)
+        {
+            if(inGap)
+            {
+                if(!isspace(c))
+                {
+                    inGap = false;
+                    lastStart = idx;
+                }
+            }
+            else
+            {
+                if(isspace(c))
+                {
+                    inGap = true;
+                    result.push_back({{from.line, from.col+lastStart},{to.line, from.col+idx-1},
+                                      line.substr(lastStart, idx-lastStart), false, true});
+                }
+            }
+            idx++;
+        }
+        result.push_back({{from.line, from.col+lastStart},{to.line, from.col+idx-1},
+                          line.substr(lastStart, idx-lastStart), false, true});
+        
+        return result;
+    }
+
     ext::StrExt readFile(const ext::StrExt &path)
     {
         try
@@ -343,7 +380,7 @@ namespace jal
                             ParseToken chunk = {{token.from.line, token.from.col+front},
                                                 {token.to.line, token.to.col+idx-1},
                                                 line.substr(front, idx-front),false,false};
-                            chunk.token = chunk.token.trim();
+                            chunk.token = chunk.token;
                             if(!chunk.token.empty())
                             {
                                 newSet.push_back({ParseType::unparsed, chunk});
@@ -361,7 +398,7 @@ namespace jal
                         ParseToken chunk = {{token.from.line, token.from.col+front},
                                             {token.to.line, token.to.col+line.size()-1},
                                             line.substr(front, line.size()-front),false,false};
-                        chunk.token = chunk.token.trim();
+                        chunk.token = chunk.token;
                         if(!chunk.token.empty())
                         {
                             newSet.push_back({ParseType::unparsed, chunk});
@@ -371,6 +408,118 @@ namespace jal
             }
         }
         return newSet;
+    }
+    
+    vector<VarToken> trimAndSplitUnparsed(vector<VarToken> &tokens)
+    {
+        vector<VarToken> newSet;
+        for(auto &token : tokens)
+        {
+            if(token.type == ParseType::unparsed)
+            {
+                auto &chunk = get<ParseToken>(token.value);
+                auto line = chunk.token;
+                auto len = line.size();
+                line = line.trimFront();
+                chunk.from.col += (len-line.size());
+                len = line.size();
+                line = line.trimBack();
+                chunk.to.col -= (len-line.size());
+                chunk.token = line;
+                if(!line.empty())
+                {
+                    auto splitSet = splitOnGaps(chunk);
+                    for(const auto &segment : splitSet)
+                    {
+                        newSet.push_back({ParseType::atomicValue, segment});
+                    }
+                }
+            }
+            else
+            {
+                newSet.push_back(token);
+            }
+        }
+        return newSet;
+    }
+    
+    VarToken *_addAndGetChild(VarToken *parent, VarToken value)
+    {
+        auto &vec = get<vector<VarToken>>(parent->value);
+        vec.push_back(value);
+        return &(vec.back());
+    }
+    
+    VarToken joinMembers(vector<VarToken> &tokens)
+    {
+        VarToken root{ParseType::groupedMembers, vector<VarToken>()};
+        
+        if(tokens.empty())
+        {
+            throw JalException("Document error; blank document",
+                               ErrorLevel::document);
+        }
+        if((tokens[0].type != ParseType::delimiter) || (get<DelimPt>(tokens[0].value).type != ParsDelimiter::openBrace))
+        {
+            throw JalException("Document error; must start with opening brace",
+                               ErrorLevel::document, to_underlying(ErrorType::improperEnclosure));
+        }
+        
+        int idx{0};
+        deque<VarToken *> groupStack{&root};
+        deque<ParsePos> ptStack{{0,0}};
+        while(!groupStack.empty())
+        {
+            idx++;
+            if(idx >= tokens.size())
+            {
+                throw JalException("Document error; document ended without completing enclosure",
+                                   ErrorLevel::document, to_underlying(ErrorType::improperEnclosure),
+                                   ptStack.back());
+            }
+            else if(tokens[idx].type == ParseType::delimiter)
+            {
+                const auto &delim = get<DelimPt>(tokens[idx].value);
+                switch(delim.type)
+                {
+                case ParsDelimiter::openBrace:
+                    groupStack.push_back(_addAndGetChild(groupStack.back(),{ParseType::groupedMembers, vector<VarToken>()}));
+                    ptStack.push_back(delim.pt);
+                break;
+                case ParsDelimiter::openList:
+                    groupStack.push_back(_addAndGetChild(groupStack.back(),{ParseType::list, vector<VarToken>()}));
+                    ptStack.push_back(delim.pt);
+                break;
+                case ParsDelimiter::closedBrace:
+                    if(groupStack.back()->type != ParseType::groupedMembers)
+                    {
+                        throw JalException("Document error; document element closed with incorrect enclosure.",
+                                           ErrorLevel::document, to_underlying(ErrorType::improperEnclosure),
+                                           delim.pt);
+                    }
+                    groupStack.pop_back();
+                    ptStack.pop_back();
+                break;
+                case ParsDelimiter::closedList:
+                    if(groupStack.back()->type != ParseType::list)
+                    {
+                        throw JalException("Document error; document element closed with incorrect enclosure.",
+                                           ErrorLevel::document, to_underlying(ErrorType::improperEnclosure),
+                                           delim.pt);
+                    }
+                    groupStack.pop_back();
+                    ptStack.pop_back();
+                break;
+                default:
+                    get<vector<VarToken>>(groupStack.back()->value).push_back({tokens[idx]});
+                }
+            }
+            else
+            {
+                get<vector<VarToken>>(groupStack.back()->value).push_back({tokens[idx]});
+            }
+        }
+        return root;
     }
 }
 

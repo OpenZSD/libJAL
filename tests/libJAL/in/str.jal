@@ -1,14 +1,14 @@
 {
-    memberA: test
+    memberA: test,
     B: \"""
 FIRST STRING WITH TRIMMED NEWLINE
-"""\
-    c: """second string""" "~first basic enclosed string~~" \""" 3rd as
-multiline string~~"""
-    d: """4th""" """5th""""""
-    6th """\ """
+"""\,
+    c: """second string""", "~first basic enclosed string~~", \""" 3rd as
+multiline string~~""",
+    d: """4th""", """5th""","""
+    6th """\, """
     
-    7th """\
+    7th """\,
     e : """10 lines of ~"empty space~"
 
 
@@ -19,6 +19,6 @@ multiline string~~"""
 
 
 
-"""
+""",
     "f":\""" ~1 """\
 }

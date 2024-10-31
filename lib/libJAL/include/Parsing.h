@@ -33,14 +33,16 @@ namespace jal
         variant<ParseToken, DelimPt, vector<VarToken>, map<ext::StrExt, VarToken>> value;
     };
     
+    vector<ParseToken> splitOnGaps(const ParseToken &lineTok);
     
     ext::StrExt readFile(const ext::StrExt &path);
     vector<ParseToken> splitToLines(const ext::StrExt &fullText);
     vector<ParseToken> splitOutMultilines(vector<ParseToken> &tokens);
     vector<ParseToken> splitOutQuoted(vector<ParseToken> &tokens);
     vector<VarToken> splitOutDelimiters(vector<ParseToken> &tokens);
-    /*vector<VarToken> joinMembers();
-    vector<VarToken> joinCollections();
+    vector<VarToken> trimAndSplitUnparsed(vector<VarToken> &tokens);
+    VarToken joinMembers(vector<VarToken> &tokens);
+    /*vector<VarToken> joinCollections();
     void produceDocument();*/
 }
 
